@@ -4,39 +4,34 @@
   "env": {
     "browser": true
   },
-  "extends": [
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
-  ],
+  "extends": ["plugin:@typescript-eslint/recommended", "plugin:react/recommended"],
   "parserOptions": {
-    "project": [
-      "tsconfig.json"
-    ],
+    "project": ["tsconfig.json"],
     "ecmaVersion": 2020,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     }
   },
-    "plugins": [
-    "@typescript-eslint",
-    "react",
-    "react-hooks",
-    "simple-import-sort",
-    "prettier"
-  ],
+  "plugins": ["@typescript-eslint", "react", "react-hooks", "simple-import-sort", "prettier"],
   "rules": {
     "@typescript-eslint/camelcase": 0,
     "@typescript-eslint/explicit-function-return-type": 0,
-    "@typescript-eslint/member-delimiter-style": ["error", {
-      "multiline": {
-        "delimiter": "none",
-        "requireLast": true
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "none",
+          "requireLast": true
+        }
       }
-    }],
-    "@typescript-eslint/no-empty-function": ["error", {
-      "allow": ["arrowFunctions"]
-    }],
+    ],
+    "@typescript-eslint/no-empty-function": [
+      "error",
+      {
+        "allow": ["arrowFunctions"]
+      }
+    ],
     "@typescript-eslint/no-non-null-assertion": 0,
     "@typescript-eslint/no-var-requires": 0,
     "no-debugger": "error",
@@ -50,15 +45,15 @@
       {
         "endOfLine": "auto"
       }
-    ],
-    "simple-import-sort/imports": ["error", {
-      "groups": [
-        ["^react"],
-        ["^\\u0000"],
-        ["^(@(?!App|Spec))?\\w"],
-        ["^[^.]"],
-        ["^\\."]
-    ]}]
+    ]
+    // "simple-import-sort/imports": ["error", {
+    //   "groups": [
+    //     ["^react"],
+    //     ["^\\u0000"],
+    //     ["^(@(?!App|Spec))?\\w"],
+    //     ["^[^.]"],
+    //     ["^\\."]
+    // ]}]
   },
   "overrides": [
     {
