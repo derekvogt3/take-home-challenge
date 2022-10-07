@@ -5,19 +5,19 @@ import nycPath from '../data/new-york-city-boroughs'
 const cities = [
   {
     id: 'nyc',
-    emoji: 'x',
+    emoji: '🗽',
     name: 'New York',
     coordinates: nycPath,
   },
   {
     id: 'la',
-    emoji: 'x',
+    emoji: '☀️',
     name: 'Los Angeles',
     coordinates: laPath,
   },
   {
     id: 'mia',
-    emoji: 'x',
+    emoji: '🌴',
     name: 'Miami',
     coordinates: miamiPath,
   },

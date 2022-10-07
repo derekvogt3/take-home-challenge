@@ -1,16 +1,27 @@
 import React from 'react'
 import Confetti from 'react-confetti'
 import useWindowSize from 'hooks/useWindowSize'
-import {useEffect} from 'react'
-
-const cities = ['🗽 New York', '🌴 Miami', '☀️ Los Angeles']
+import {useEffect, useState} from 'react'
 
 export default function Landing() {
   const {width, height} = useWindowSize()
+  const [loading, setLoading] = useState(true)
+  const [cities, setCities] = useState<any[]>([])
+
   useEffect(() => {
-    fetch('/v1/events')
-      .then(res => console.log(res))
-      .then(data => console.log(data))
+    async function fetchCities() {
+      try {
+        const res = await fetch('http://localhost:4000/cities')
+        const cities = await res.json()
+        console.log(cities)
+        setCities(cities)
+        setLoading(false)
+      } catch (err) {
+        console.log('error', err)
+      }
+    }
+
+    fetchCities()
   }, [])
   return (
     <>
@@ -20,13 +31,17 @@ export default function Landing() {
           <div className='CitySelector-prompt'>Where are you looking for experiences?</div>
 
           <div className='CitySelector-cities'>
-            {cities.map(city => {
-              return (
-                <div key={city} className='gold'>
-                  {city}
-                </div>
-              )
-            })}
+            {!loading ? (
+              cities.map(city => {
+                return (
+                  <div key={city.id} className='gold'>
+                    {city.emoji + ' ' + city.name}
+                  </div>
+                )
+              })
+            ) : (
+              <></>
+            )}
             <div className='blue'>📍 Near Me</div>
           </div>
         </div>

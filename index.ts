@@ -2,8 +2,9 @@ import app from './app'
 import mongoose from 'mongoose'
 
 // Import Routes
-import postsRoute from './src/routes/posts'
+
 import eventsRoute from './src/routes/events'
+import citiesRoute from './src/routes/cities'
 import bodyParser from 'body-parser'
 
 const server_port = Number(process.env.PORT) || 4000
@@ -28,15 +29,8 @@ mongoose.connection.once('open', async () => {
 //Middleware
 
 app.use(bodyParser.json())
-
-app.use('/posts', postsRoute)
 app.use('/events', eventsRoute)
-
-//Routes
-
-app.get('/', (req, res) => {
-  res.send('We are home')
-})
+app.use('/cities', citiesRoute)
 
 app.listen(server_port, server_host, () => {
   console.log('Running Server')
