@@ -26,7 +26,7 @@
   width: 100%;
 }
 
-.CitySelector-cities > div {
+.CitySelector-cities > a {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -97,4 +97,20 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a:active {
+  text-decoration: none;
 }

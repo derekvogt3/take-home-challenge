@@ -1,12 +1,75 @@
 import React from 'react'
 import {useSearchParams} from 'react-router-dom'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
+import EventCard from './EventCard'
+import {Event} from 'components/common/types'
+import {Link} from 'react-router-dom'
 
 export default function Explore() {
   const [searchParams] = useSearchParams()
-  const [time, setTime] = useState(searchParams.get('t'))
-  // const [city, setCity] = useState(searchParams.get('city'))
   const [loading, setLoading] = useState(true)
+  const [events, setEvents] = useState<Event[]>(new Array<Event>())
+  const [week, setWeek] = useState(todayOrWeek())
+
+  function todayOrWeek() {
+    if (searchParams.get('t') === 'week') {
+      return true
+    }
+    return false
+  }
+
+  const startDate = new Date()
+  startDate.setHours(0, 0, 0, 0)
+  const endDate = new Date()
+
+  if (week) {
+    endDate.setDate(startDate.getDate() + 7)
+  }
+  endDate.setHours(23, 59, 59, 999)
+
+  function toggleWeek(week: boolean) {
+    setWeek(week)
+    window.history.replaceState(
+      null,
+      '',
+      `explore?c=popular&t=${week ? 'week' : 'today'}&p=1&city=${searchParams.get('city')}`,
+    )
+  }
+
+  useEffect(() => {
+    async function fetchEvents() {
+      const isNear = searchParams.get('city') === 'near'
+      let lat = 0
+      let lng = 0
+      if (isNear) {
+        if ('geolocation' in navigator) {
+          navigator.geolocation.getCurrentPosition(function (position) {
+            lat = position.coords.latitude
+            lng = position.coords.longitude
+          })
+        } else {
+          console.log('GeoLocation Not Available')
+        }
+      }
+      const latLngString = `&lat=${lat}&lng=${lng}`
+      try {
+        const res = await fetch(
+          `http://localhost:4000/events/explore/${searchParams.get('city')}/?startdate=${startDate}&enddate=${endDate}${
+            isNear ? latLngString : ''
+          }`,
+        )
+        const data = await res.json()
+        setEvents(data)
+        setLoading(false)
+      } catch (err) {
+        console.log('error', err)
+      }
+    }
+
+    fetchEvents()
+  }, [week])
+
+  const eventsToInclude = !loading ? events.map(event => <EventCard key={event._id} event={event} />) : <></>
 
   return (
     <>
@@ -33,73 +96,23 @@ export default function Explore() {
           <div className='Explore-body-main'>
             <div className='Explore-body-main-nav'>
               <div className='Explore-body-main-nav-right'>
-                <div className='selected'>This Week</div>
-                <div className=''>Today</div>
+                <div className={week ? 'selected' : ''} onClick={() => toggleWeek(true)}>
+                  This Week
+                </div>
+                <div className={week ? '' : 'selected'} onClick={() => toggleWeek(false)}>
+                  Today
+                </div>
               </div>
             </div>
-            <div className='Explore-body-main-results'>
-              <div
-                className='EventCard'
-                style={{
-                  backgroundImage:
-                    'url("https://postreact.s3.us-east-2.amazonaws.com/images/e5f977a6-4d0a-4f8c-815a-a9174eb97f13.jpg")',
-                }}></div>
-              <div
-                className='EventCard'
-                style={{
-                  backgroundImage:
-                    'url("https://postreact.s3.us-east-2.amazonaws.com/images/e5f977a6-4d0a-4f8c-815a-a9174eb97f13.jpg")',
-                }}></div>
-              <div
-                className='EventCard'
-                style={{
-                  backgroundImage:
-                    'url("https://postreact.s3.us-east-2.amazonaws.com/images/e5f977a6-4d0a-4f8c-815a-a9174eb97f13.jpg")',
-                }}></div>
-              <div
-                className='EventCard'
-                style={{
-                  backgroundImage:
-                    'url("https://postreact.s3.us-east-2.amazonaws.com/images/e5f977a6-4d0a-4f8c-815a-a9174eb97f13.jpg")',
-                }}></div>
-              <div
-                className='EventCard'
-                style={{
-                  backgroundImage:
-                    'url("https://postreact.s3.us-east-2.amazonaws.com/images/e5f977a6-4d0a-4f8c-815a-a9174eb97f13.jpg")',
-                }}></div>
-              <div
-                className='EventCard'
-                style={{
-                  backgroundImage:
-                    'url("https://postreact.s3.us-east-2.amazonaws.com/images/e5f977a6-4d0a-4f8c-815a-a9174eb97f13.jpg")',
-                }}></div>
-              <div
-                className='EventCard'
-                style={{
-                  backgroundImage:
-                    'url("https://postreact.s3.us-east-2.amazonaws.com/images/e5f977a6-4d0a-4f8c-815a-a9174eb97f13.jpg")',
-                }}></div>
-              <div
-                className='EventCard'
-                style={{
-                  backgroundImage:
-                    'url("https://postreact.s3.us-east-2.amazonaws.com/images/e5f977a6-4d0a-4f8c-815a-a9174eb97f13.jpg")',
-                }}></div>
-              <div
-                className='EventCard'
-                style={{
-                  backgroundImage:
-                    'url("https://postreact.s3.us-east-2.amazonaws.com/images/e5f977a6-4d0a-4f8c-815a-a9174eb97f13.jpg")',
-                }}></div>
-            </div>
+            <div className='Explore-body-main-results'>{eventsToInclude}</div>
           </div>
         </div>
       </div>
-      <img
-        src='https://posh-b2.s3.us-east-2.amazonaws.com/left-arrow-in-circular-button-black-symbol.svg'
-        className='Explore-back'
-        onClick={() => setLoading(false)}></img>
+      <Link to='/'>
+        <img
+          src='https://posh-b2.s3.us-east-2.amazonaws.com/left-arrow-in-circular-button-black-symbol.svg'
+          className='Explore-back'></img>
+      </Link>
       <div className='ExploreLoader fadeOut noPointer'>
         <canvas
           width='1064'

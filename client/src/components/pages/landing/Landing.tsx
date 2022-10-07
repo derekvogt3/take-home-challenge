@@ -2,18 +2,19 @@ import React from 'react'
 import Confetti from 'react-confetti'
 import useWindowSize from 'hooks/useWindowSize'
 import {useEffect, useState} from 'react'
+import {Link} from 'react-router-dom'
+import {City} from 'components/common/types'
 
 export default function Landing() {
   const {width, height} = useWindowSize()
   const [loading, setLoading] = useState(true)
-  const [cities, setCities] = useState<any[]>([])
+  const [cities, setCities] = useState<City[]>(new Array<City>())
 
   useEffect(() => {
     async function fetchCities() {
       try {
         const res = await fetch('http://localhost:4000/cities')
         const cities = await res.json()
-        console.log(cities)
         setCities(cities)
         setLoading(false)
       } catch (err) {
@@ -34,15 +35,22 @@ export default function Landing() {
             {!loading ? (
               cities.map(city => {
                 return (
-                  <div key={city.id} className='gold'>
+                  <Link to={`explore?c=popular&t=week&p=1&city=${city.id}`} key={city.id} className='gold'>
                     {city.emoji + ' ' + city.name}
-                  </div>
+                  </Link>
                 )
               })
             ) : (
               <></>
             )}
-            <div className='blue'>📍 Near Me</div>
+
+            {!loading ? (
+              <Link to={`explore?c=popular&t=week&p=1&city=near`} className='blue'>
+                📍 Near Me
+              </Link>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </div>
