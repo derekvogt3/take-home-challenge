@@ -1,4 +1,5 @@
 @use '../globals/spacing';
+@use '../globals/color_pallete';
 
 .Explore-cover-video {
   width: 1200px;
@@ -65,24 +66,22 @@ video {
   align-items: center;
   gap: 15px;
   padding: 0 10px;
-}
-
-.Explore-body-main-nav-right > div {
-  border: 1px solid #7a7b7d;
-  text-transform: uppercase;
-  font-family: Circular Std;
-  font-weight: 700;
-  color: #7a7b7d;
-  font-size: 14px;
-  padding: 8px 30px;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.Explore-body-main-nav-right > div.selected {
-  border: 1px solid #fc0;
-  color: #fc0;
+  div {
+    border: 1px solid color_pallete.$grey;
+    text-transform: uppercase;
+    font-family: Circular Std;
+    font-weight: 700;
+    color: color_pallete.$grey;
+    font-size: 14px;
+    padding: 8px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  div.selected {
+    border: 1px solid color_pallete.$primary;
+    color: color_pallete.$primary;
+  }
 }
 
 .Explore-body-main-results {
@@ -182,7 +181,7 @@ video {
 }
 
 .ExploreLoader-text {
-  color: #fc0;
+  color: color_pallete.$primary;
   text-transform: uppercase;
   font-family: Circular Std;
   font-weight: 200;
@@ -195,7 +194,15 @@ video {
   width: 100%;
   height: 10px;
   border-radius: 20px;
-  border: 1px solid #fc0;
+  border: 1px solid color_pallete.$primary;
+
+  div {
+    width: 0;
+    box-shadow: 0 0 30px color_pallete.$primary;
+    height: 100%;
+    background: color_pallete.$primary;
+    animation: loadUp 7s ease-out forwards;
+  }
 }
 
 @keyframes fadeOut {
@@ -215,14 +222,6 @@ video {
   100% {
     transform: translateX(-50%) scale(1);
   }
-}
-
-.ExploreLoader-loadBar > div {
-  width: 0;
-  box-shadow: 0 0 30px #fc0;
-  height: 100%;
-  background: #fc0;
-  animation: loadUp 7s ease-out forwards;
 }
 
 @keyframes loadUp {

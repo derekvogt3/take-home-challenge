@@ -13,7 +13,7 @@ export default function Landing() {
   useEffect(() => {
     async function fetchCities() {
       try {
-        const res = await fetch('http://localhost:4000/cities')
+        const res = await fetch(`${process.env.API_URL}cities`)
         const cities = await res.json()
         setCities(cities)
         setLoading(false)
@@ -32,28 +32,36 @@ export default function Landing() {
           <div className='CitySelector-prompt'>Where are you looking for experiences?</div>
 
           <div className='CitySelector-cities'>
-            {!loading ? (
-              cities.map(city => {
-                return (
-                  <Link to={`explore?c=popular&t=week&p=1&city=${city.id}`} key={city.id} className='gold'>
-                    {city.emoji + ' ' + city.name}
-                  </Link>
-                )
-              })
-            ) : (
-              <></>
-            )}
-
-            {!loading ? (
-              <Link to={`explore?c=popular&t=week&p=1&city=near`} className='blue'>
-                📍 Near Me
-              </Link>
-            ) : (
-              <></>
-            )}
+            <Cities cities={cities} loading={loading} />
           </div>
         </div>
       </div>
+    </>
+  )
+}
+
+interface CitiesProps {
+  loading: boolean
+  cities: City[]
+}
+
+function Cities({loading, cities}: CitiesProps) {
+  if (loading) {
+    return <></>
+  }
+
+  return (
+    <>
+      {cities.map(city => {
+        return (
+          <Link to={`explore?c=popular&t=week&p=1&city=${city.id}`} key={city.id} className='gold'>
+            {city.emoji + ' ' + city.name}
+          </Link>
+        )
+      })}
+      <Link to={`explore?c=popular&t=week&p=1&city=near`} className='blue'>
+        📍 Near Me
+      </Link>
     </>
   )
 }

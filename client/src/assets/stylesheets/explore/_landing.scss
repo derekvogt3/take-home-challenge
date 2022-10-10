@@ -1,3 +1,6 @@
+@use '../globals/spacing';
+@use '../globals/color_pallete';
+
 .CitySelector {
   height: 100vh;
   width: 100vw;
@@ -9,7 +12,7 @@
 }
 
 .CitySelector-prompt {
-  color: #fc0;
+  color: color_pallete.$primary;
   text-transform: uppercase;
   font-family: Circular Std;
   font-weight: 200;
@@ -24,42 +27,42 @@
   flex-direction: column;
   gap: 10px;
   width: 100%;
-}
 
-.CitySelector-cities > a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  height: 70px;
-  border-radius: 10px;
-  text-transform: uppercase;
-  font-weight: 500;
-  letter-spacing: 3px;
-  font-size: 14px;
-  cursor: pointer;
-  animation: fadeInUp 2s forwards ease-out;
-  opacity: 0;
-  transform: translateY(200px);
-  transition: 0.3s;
+  a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 70px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    animation: fadeInUp 2s forwards ease-out;
+    opacity: 0;
+    transform: translateY(200px);
+    transition: 0.3s;
+  }
 }
 
 .gold {
-  border: 1px solid #fc0;
-  box-shadow: 0 0 10px -2px #fc0, 0px 0px 10px #fc0 inset;
-  color: #fc0;
+  border: 1px solid color_pallete.$primary;
+  box-shadow: 0 0 10px -2px color_pallete.$primary, 0px 0px 10px color_pallete.$primary inset;
+  color: color_pallete.$primary;
   &:hover {
-    box-shadow: 0 0 30px -2px #fc0, 0px 0px 10px #fc0 inset;
+    box-shadow: 0 0 30px -2px color_pallete.$primary, 0px 0px 10px color_pallete.$primary inset;
   }
 }
 
 .blue {
-  border: 1px solid #0cf;
-  box-shadow: 0 0 10px -2px #0cf, 0px 0px 10px #0cf inset;
-  color: #0cf;
+  border: 1px solid color_pallete.$secondary;
+  box-shadow: 0 0 10px -2px color_pallete.$secondary, 0px 0px 10px color_pallete.$secondary inset;
+  color: color_pallete.$secondary;
   &:hover {
-    box-shadow: 0 0 30px -2px #0cf, 0px 0px 10px #0cf inset;
+    box-shadow: 0 0 30px -2px color_pallete.$secondary, 0px 0px 10px color_pallete.$secondary inset;
   }
 }
 

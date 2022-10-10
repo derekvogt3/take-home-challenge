@@ -1,13 +1,13 @@
 import React from 'react'
 import {Event} from 'components/common/types'
 
-interface IProps {
+interface EventProps {
   event: Event
 }
 
 const dayOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
-export default function EventCard({event}: IProps) {
+export default function EventCard({event}: EventProps) {
   function getCurrentDay() {
     const today = new Date()
     const day = new Date(event.startUtc)

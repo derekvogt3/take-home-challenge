@@ -9,15 +9,9 @@ export default function Explore() {
   const [searchParams] = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [events, setEvents] = useState<Event[]>(new Array<Event>())
-  const [week, setWeek] = useState(todayOrWeek())
+  const [week, setWeek] = useState(searchParams.get('t') === 'week' ? true : false)
 
-  function todayOrWeek() {
-    if (searchParams.get('t') === 'week') {
-      return true
-    }
-    return false
-  }
-
+  //get the start and end date for the time period week vs day, this is to set a date for the time query which will send as a url query
   const startDate = new Date()
   startDate.setHours(0, 0, 0, 0)
   const endDate = new Date()
@@ -29,6 +23,7 @@ export default function Explore() {
 
   function toggleWeek(week: boolean) {
     setWeek(week)
+    //to have the same url impact as on the current website, change the url, this does not trigger a re-render
     window.history.replaceState(
       null,
       '',
@@ -36,37 +31,62 @@ export default function Explore() {
     )
   }
 
-  useEffect(() => {
-    async function fetchEvents() {
-      const isNear = searchParams.get('city') === 'near'
-      let lat = 0
-      let lng = 0
-      if (isNear) {
-        if ('geolocation' in navigator) {
-          navigator.geolocation.getCurrentPosition(function (position) {
-            lat = position.coords.latitude
-            lng = position.coords.longitude
-          })
-        } else {
-          console.log('GeoLocation Not Available')
-        }
-      }
-      const latLngString = `&lat=${lat}&lng=${lng}`
-      try {
+  //if city is set to near, fetch with latitue and longitudte
+  function fetchNear() {
+    if ('geolocation' in navigator) {
+      console.log('geolodation here')
+      navigator.geolocation.getCurrentPosition(async pos => {
+        const lng = pos.coords.longitude
+        const lat = pos.coords.latitude
         const res = await fetch(
-          `http://localhost:4000/events/explore/${searchParams.get('city')}/?startdate=${startDate}&enddate=${endDate}${
-            isNear ? latLngString : ''
-          }`,
+          `${process.env.API_URL}events/explore/${searchParams.get(
+            'city',
+          )}/?startdate=${startDate.toISOString()}&enddate=${endDate.toISOString()}&lat=${lat}&lng=${lng}`,
         )
         const data = await res.json()
         setEvents(data)
         setLoading(false)
+      })
+    } else {
+      console.log('GeoLocation Not Available')
+      setLoading(false)
+    }
+  }
+
+  async function fetchCity() {
+    //if city is null, don't make the request
+    if (searchParams.get('city') === '') {
+      setLoading(false)
+    } else {
+      const res = await fetch(
+        `${process.env.API_URL}events/explore/${searchParams.get(
+          'city',
+        )}/?startdate=${startDate.toISOString()}&enddate=${endDate.toISOString()}`,
+      )
+      const data = await res.json()
+      console.log(data)
+      setEvents(data)
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    function fetchEvents() {
+      const isNear = searchParams.get('city') === 'near'
+
+      try {
+        if (isNear) {
+          fetchNear()
+        } else {
+          fetchCity()
+        }
       } catch (err) {
         console.log('error', err)
       }
     }
 
     fetchEvents()
+    //when week vs day changes, make a fetch request with the updated parameters
   }, [week])
 
   const eventsToInclude = !loading ? events.map(event => <EventCard key={event._id} event={event} />) : <></>
