@@ -19,6 +19,8 @@ const eventSchema = new Schema({
   cityId: String,
 })
 
+eventSchema.index({location: '2dsphere'})
+
 const Event = mongoose.model('Events', eventSchema)
 
 export default Event

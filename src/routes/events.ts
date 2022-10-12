@@ -14,6 +14,44 @@ router.get('/', async (req: Request, res: Response) => {
   }
 })
 
+router.get('/explore/:cityId/', async (req: Request, res: Response) => {
+  try {
+    let events: Event[]
+
+    //if the url paramaters is near, get the locations using the "near" query parameter, else find by the cityid tag
+
+    if (req.params.cityId === 'near') {
+      events = await Event.find({
+        location: {
+          $near: {
+            $maxDistance: 100000,
+            $geometry: {
+              type: 'Point',
+              coordinates: [req.query.lng, req.query.lat],
+            },
+          },
+        },
+        startUtc: {
+          $gte: req.query.startdate,
+          $lt: req.query.enddate,
+        },
+      })
+    } else {
+      events = await Event.find({
+        cityId: req.params.cityId,
+        startUtc: {
+          $gte: req.query.startdate,
+          $lt: req.query.enddate,
+        },
+      }).exec()
+    }
+
+    res.json(events)
+  } catch (err) {
+    res.json({message: err})
+  }
+})
+
 router.post('/', (req: Request, res: Response) => {
   var event = new Event({
     timezone: req.body.timezone,
@@ -30,12 +68,18 @@ router.post('/', (req: Request, res: Response) => {
     cityId: null,
   })
 
+  //gets the coordinates of the event
+
   var pt = turf.point(event.location.coordinates)
 
+  //gets the polygons for each city
   cities.forEach(city => {
+    //each city has neighborhoods, so continue to parse the geoJSON file to get the polygons within the neighborhood
     city.coordinates.features.forEach((feature: {geometry: any}) => {
+      //each neighborhood has multiple polygons, so continue to check out each polygon within the neighborhood array
       feature.geometry.coordinates.forEach((polygon: any) => {
         var poly = turf.polygon(polygon)
+        //checks to see if the location of the event is
         if (turf.booleanPointInPolygon(pt, poly)) {
           event.cityId = city.id
         }
